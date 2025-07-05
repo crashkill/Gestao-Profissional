@@ -19,21 +19,13 @@ const Index = () => {
       setLoading(true);
       setError(null);
       
-      // Debug: Log do ambiente
-      console.log('🔍 Debug - Iniciando busca de profissionais...');
-      console.log('🔍 Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
-      console.log('🔍 Supabase Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'SET' : 'MISSING');
-      
       try {
         const result = await executeSupabaseQuery(async (client) => {
           const { data, error: supabaseError } = await client
             .from('colaboradores')
             .select('*');
 
-          console.log('🔍 Resposta do Supabase:', { data: data?.length, error: supabaseError });
-
           if (supabaseError) {
-            console.error('❌ Erro do Supabase:', supabaseError);
             throw supabaseError;
           }
 
@@ -41,21 +33,13 @@ const Index = () => {
         });
 
         if (result) {
-          console.log('✅ Dados carregados:', result.length, 'profissionais');
           setProfessionals(result as Professional[]);
         }
       } catch (err: any) {
-        console.error("❌ Erro ao buscar profissionais do Supabase:", err);
-        console.error("❌ Detalhes do erro:", {
-          message: err.message,
-          name: err.name,
-          code: err.code,
-          details: err.details,
-          hint: err.hint
-        });
+        console.error("Erro ao buscar profissionais:", err.message);
+        setError("Erro ao carregar dados. Por favor, tente novamente mais tarde.");
         
         // FALLBACK: Usar dados mock em caso de erro
-        console.log('🔄 Usando dados mock como fallback...');
         const mockData: Professional[] = [
           {
             id: '1',
@@ -201,9 +185,6 @@ const Index = () => {
         ];
 
         setProfessionals(mockData);
-        console.log('✅ Dados mock carregados:', mockData.length, 'profissionais');
-        // Não definir erro quando usar dados mock - apenas avisar no console
-        // setError(`Usando dados de demonstração. Erro original: ${err.message || 'Falha ao buscar dados.'}`);
       } finally {
         setLoading(false);
       }
