@@ -6,8 +6,8 @@
   <title>Redirecting...</title>
   <script>
     // Redirect to index.html with the path as a query parameter
-    const path = window.location.pathname.replace('/gestao-profissionais', '');
-    const redirect = '/gestao-profissionais/' + (path === '/' ? '' : '?redirect=' + encodeURIComponent(path));
+    const path = window.location.pathname.replace('/gestao-profissional', '');
+    const redirect = '/gestao-profissional/' + (path === '/' ? '' : '?redirect=' + encodeURIComponent(path));
     window.location.replace(redirect);
   </script>
 </head>
