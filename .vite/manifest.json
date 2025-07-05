@@ -1,0 +1,64 @@
+{
+  "_browser-BmBgrgbH.js": {
+    "file": "assets/js/browser-BmBgrgbH.js",
+    "name": "browser",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-CEeT45TU.js"
+    ]
+  },
+  "_react-CEeT45TU.js": {
+    "file": "assets/js/react-CEeT45TU.js",
+    "name": "react"
+  },
+  "_supabase-DXCJ1J-Z.js": {
+    "file": "assets/js/supabase-DXCJ1J-Z.js",
+    "name": "supabase",
+    "imports": [
+      "_react-CEeT45TU.js"
+    ],
+    "dynamicImports": [
+      "_browser-BmBgrgbH.js"
+    ]
+  },
+  "_three-BnUIUvPc.js": {
+    "file": "assets/js/three-BnUIUvPc.js",
+    "name": "three",
+    "imports": [
+      "_react-CEeT45TU.js",
+      "_ui-BTgLXa7k.js",
+      "_utils-2kEPHUq3.js"
+    ]
+  },
+  "_ui-BTgLXa7k.js": {
+    "file": "assets/js/ui-BTgLXa7k.js",
+    "name": "ui",
+    "imports": [
+      "_react-CEeT45TU.js"
+    ]
+  },
+  "_utils-2kEPHUq3.js": {
+    "file": "assets/js/utils-2kEPHUq3.js",
+    "name": "utils",
+    "imports": [
+      "_react-CEeT45TU.js",
+      "_ui-BTgLXa7k.js"
+    ]
+  },
+  "index.html": {
+    "file": "assets/js/index-CC2XO46Y.js",
+    "name": "index",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_ui-BTgLXa7k.js",
+      "_three-BnUIUvPc.js",
+      "_react-CEeT45TU.js",
+      "_utils-2kEPHUq3.js",
+      "_supabase-DXCJ1J-Z.js"
+    ],
+    "css": [
+      "assets/css/index-B7Bpv8nq.css"
+    ]
+  }
+}
