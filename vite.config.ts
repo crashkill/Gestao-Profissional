@@ -38,26 +38,27 @@ export default defineConfig(({ mode }) => {
   const currentEnv = validateEnvironment(mode);
   const config = environmentConfig[currentEnv];
   const isProduction = currentEnv === 'production';
-  
-  // Logs para debug
-  console.log('🔧 Configuração do Ambiente:');
-  console.log(`📌 Modo: ${mode}`);
-  console.log(`📌 Ambiente: ${currentEnv}`);
-  console.log(`📁 Base URL: ${config.base}`);
-  console.log(`🔗 Proxy Target: ${config.proxyTarget}`);
-  console.log(`🔑 Supabase URL: ${env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL}`);
 
   // Configurações de build
   const buildConfig = {
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: currentEnv === 'development',
+    manifest: true,
+    cssCodeSplit: true,
+    modulePreload: {
+      polyfill: true
+    },
     ...(isProduction && {
       minify: 'terser' as const,
       terserOptions: {
         compress: {
           drop_console: true,
           drop_debugger: true,
+          pure_funcs: ['console.log', 'console.debug', 'console.info'],
+        },
+        format: {
+          comments: false,
         },
       },
       rollupOptions: {
@@ -65,7 +66,12 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             react: ['react', 'react-dom', 'react-router-dom'],
             ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+            supabase: ['@supabase/supabase-js'],
+            utils: ['@tanstack/react-query', 'framer-motion'],
           },
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]',
         },
       }
     })
@@ -79,21 +85,16 @@ export default defineConfig(({ mode }) => {
     if (!supabaseUrl || !supabaseKey) {
       if (currentEnv === 'development') {
         console.warn('⚠️ Variáveis do Doppler não encontradas. Execute: doppler run -- vite');
-        console.warn('⚠️ Usando valores padrão para desenvolvimento...');
       } else if (process.env.GITHUB_ACTIONS === 'true') {
         console.warn('⚠️ Variáveis do GitHub Actions não encontradas.');
-        console.warn('⚠️ Continuando build para GitHub Pages...');
       } else {
-        console.error('❌ Variáveis de ambiente necessárias não encontradas.');
-        process.exit(1);
+        throw new Error('❌ Variáveis de ambiente necessárias não encontradas.');
       }
     }
   };
 
-  // Valida as variáveis de ambiente (só falha em desenvolvimento local)
-  if (currentEnv === 'development' && !process.env.GITHUB_ACTIONS) {
-    validateEnvVars();
-  }
+  // Valida as variáveis de ambiente
+  validateEnvVars();
 
   return {
     base: config.base,
@@ -106,9 +107,10 @@ export default defineConfig(({ mode }) => {
           target: config.proxyTarget,
           changeOrigin: true,
           secure: true,
+          ws: true,
           configure: (proxy, _options) => {
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log(`🌐 Proxy request (${currentEnv}): ${req.method} ${req.url}`);
+            proxy.on('error', (err, _req, _res) => {
+              console.error('Proxy error:', err);
             });
           },
         },
@@ -135,5 +137,9 @@ export default defineConfig(({ mode }) => {
       'process.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL),
       'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY),
     },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js'],
+      exclude: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu']
+    }
   };
 });
