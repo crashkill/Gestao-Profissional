@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://crashkill.github.io/gestao-profissionais
+      url: https://crashkill.github.io/gestao-profissional
     
     steps:
     - name: 📥 Checkout Code
@@ -109,7 +109,13 @@ jobs:
     - name: 🏗️ Build Application
       run: |
         echo "🏗️ Building for production..."
-        npm run build
+        npm run build:gh-pages
+        
+        if [ $? -ne 0 ]; then
+          echo "❌ Build failed!"
+          exit 1
+        fi
+        echo "✅ Build completed successfully"
     
     - name: 🧹 Post-Build Security Scan
       run: |
@@ -149,7 +155,7 @@ jobs:
         * **Date**: $(date)
         * **Commit**: ${{ github.sha }}
         * **Tag**: ${{ github.ref }}
-        * **URL**: https://crashkill.github.io/gestao-profissionais
+        * **URL**: https://crashkill.github.io/gestao-profissional
         EOF
 
   notify-deployment:
@@ -162,7 +168,7 @@ jobs:
     - name: 📧 Send Notification
       run: |
         if [ "${{ needs.deploy-production.result }}" == "success" ]; then
-          echo "✅ Deployment successful! URL: https://crashkill.github.io/gestao-profissionais"
+          echo "✅ Deployment successful! URL: https://crashkill.github.io/gestao-profissional"
         else
           echo "⚠️ Deployment status: ${{ needs.deploy-production.result }}"
         fi 
