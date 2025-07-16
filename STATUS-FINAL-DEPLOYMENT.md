@@ -1,4 +1,8 @@
-# 🚨 STATUS FINAL DO DEPLOYMENT - Projeto Gestão Profissional
+# Status Final do Deployment
+
+## Variáveis de Ambiente
+VITE_SUPABASE_URL: [URL_SUPABASE]
+VITE_SUPABASE_ANON_KEY: [CHAVE_SUPABASE]
 
 ## 📊 Resumo Executivo
 

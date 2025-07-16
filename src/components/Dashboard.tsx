@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion as m } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend, Cell } from 'recharts'; // Adicionado BarChart, Bar, XAxis, YAxis, CartesianGrid
 import { Users, UserPlus, Upload, BarChart3 } from 'lucide-react'; // Adicionado BarChart3 para "Linguagens Diferentes"
 import { Professional } from '../types/Professional';
 import { supabase, supabaseDirect, executeSupabaseQuery } from '../lib/supabaseClient'; // Importar instância Supabase
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 interface DashboardProps {
   professionals: Professional[]; // Ainda usado para "Total de Profissionais" e "Áreas de Atuação"
@@ -229,40 +229,79 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
   }, []); // Remover dependência do supabase
 
   // Função para exportar profissionais para Excel
-  const exportToExcel = () => {
-    // Mapear os profissionais para um formato amigável para Excel
-    const data = professionals.map((prof) => ({
-      'Nome Completo': prof.nome_completo,
-      'Email': prof.email,
-      'Área de Atuação': prof.area_atuacao,
-      'Skill Principal': prof.skill_principal,
-      'Nível de Experiência': prof.nivel_experiencia,
-      'Gestor da Área': prof.gestor_area,
-      'Gestor Direto': prof.gestor_direto,
-      'Disponível para Compartilhamento': prof.disponivel_compartilhamento ? 'Sim' : 'Não',
-      'Percentual de Compartilhamento': prof.percentual_compartilhamento,
-      'Outras Skills/Cargos': prof.outras_tecnologias,
-      'Regime': prof.regime,
-      'Local Alocação': prof.local_alocacao,
-      'Proficiencia Cargo': prof.proficiencia_cargo,
-      'Hora Última Modificação': prof.hora_ultima_modificacao,
-      'Criado em': prof.created_at
-    }));
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Colaboradores');
-    XLSX.writeFile(wb, 'colaboradores_exportados.xlsx');
+  const exportToExcel = async (data: Professional[]) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Profissionais');
+    
+    // Definindo as colunas
+    worksheet.columns = [
+      { header: 'Nome Completo', key: 'nome_completo', width: 30 },
+      { header: 'Email', key: 'email', width: 20 },
+      { header: 'Área de Atuação', key: 'area_atuacao', width: 15 },
+      { header: 'Skill Principal', key: 'skill_principal', width: 30 },
+      { header: 'Nível de Experiência', key: 'nivel_experiencia', width: 15 },
+      { header: 'Gestor da Área', key: 'gestor_area', width: 25 },
+      { header: 'Gestor Direto', key: 'gestor_direto', width: 25 },
+      { header: 'Disponível para Compartilhamento', key: 'disponivel_compartilhamento', width: 20 },
+      { header: 'Percentual de Compartilhamento', key: 'percentual_compartilhamento', width: 15 },
+      { header: 'Outras Skills/Cargos', key: 'outras_tecnologias', width: 30 },
+      { header: 'Regime', key: 'regime', width: 10 },
+      { header: 'Local Alocação', key: 'local_alocacao', width: 15 },
+      { header: 'Proficiencia Cargo', key: 'proficiencia_cargo', width: 15 },
+      { header: 'Hora Última Modificação', key: 'hora_ultima_modificacao', width: 25 },
+      { header: 'Criado em', key: 'created_at', width: 20 }
+    ];
+
+    // Adicionando os dados
+    data.forEach(professional => {
+      worksheet.addRow({
+        nome_completo: professional.nome_completo,
+        email: professional.email,
+        area_atuacao: professional.area_atuacao,
+        skill_principal: professional.skill_principal,
+        nivel_experiencia: professional.nivel_experiencia,
+        gestor_area: professional.gestor_area,
+        gestor_direto: professional.gestor_direto,
+        disponivel_compartilhamento: professional.disponivel_compartilhamento ? 'Sim' : 'Não',
+        percentual_compartilhamento: professional.percentual_compartilhamento,
+        outras_tecnologias: professional.outras_tecnologias,
+        regime: professional.regime,
+        local_alocacao: professional.local_alocacao,
+        proficiencia_cargo: professional.proficiencia_cargo,
+        hora_ultima_modificacao: professional.hora_ultima_modificacao,
+        created_at: professional.created_at
+      });
+    });
+
+    // Estilizando o cabeçalho
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+
+    // Exportando o arquivo
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'colaboradores_exportados.xlsx';
+    a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   return (
-    <m.div
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-8"
+      transition={{ duration: 0.5 }}
+      className="container mx-auto p-4"
     >
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <m.div
+        <motion.div
           whileHover={{ scale: 1.02 }}
           className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
         >
@@ -275,9 +314,9 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
               <p className="text-3xl font-bold text-white">{professionals.length}</p>
             </div>
           </div>
-        </m.div>
+        </motion.div>
 
-        <m.div
+        <motion.div
           whileHover={{ scale: 1.02 }}
           className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
         >
@@ -292,9 +331,9 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
               </p>
             </div>
           </div>
-        </m.div>
+        </motion.div>
 
-        <m.div
+        <motion.div
           whileHover={{ scale: 1.02 }}
           className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
         >
@@ -309,11 +348,11 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
               </p>
             </div>
           </div>
-        </m.div>
+        </motion.div>
       </div>
 
       {/* Main Chart */}
-      <m.div
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
@@ -477,11 +516,11 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
             </div>
           </div>
         )}
-      </m.div>
+      </motion.div>
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <m.button
+        <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onNavigate('manual')}
@@ -491,9 +530,9 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
             <UserPlus className="h-6 w-6" />
             <span className="text-lg">Cadastrar Manualmente</span>
           </div>
-        </m.button>
+        </motion.button>
 
-        <m.button
+        <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onNavigate('excel')}
@@ -503,21 +542,21 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
             <Upload className="h-6 w-6" />
             <span className="text-lg">Importar do Excel</span>
           </div>
-        </m.button>
+        </motion.button>
 
-        <m.button
+        <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={exportToExcel}
+          onClick={() => exportToExcel(professionals)}
           className="bg-gradient-to-r from-yellow-500 to-green-600 hover:from-yellow-600 hover:to-green-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           <div className="flex items-center justify-center space-x-3">
             <BarChart3 className="h-6 w-6" />
             <span className="text-lg">Exportar para Excel</span>
           </div>
-        </m.button>
+        </motion.button>
       </div>
-    </m.div>
+    </motion.div>
   );
 };
 

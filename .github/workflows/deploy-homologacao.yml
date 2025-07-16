@@ -1,4 +1,4 @@
-name: 🧪 Deploy Homologação
+name: 🚀 Deploy Homologação
 
 on:
   push:
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: https://crashkill.github.io/gestao-profissionais-homolog
+      url: https://crashkill.github.io/gestao-profissional-homolog
     
     steps:
     - name: 📥 Checkout Code
@@ -150,7 +150,7 @@ jobs:
         * **Date**: $(date)
         * **Commit**: ${{ github.sha }}
         * **Tag**: ${{ github.ref }}
-        * **URL**: https://crashkill.github.io/gestao-profissionais-homolog
+        * **URL**: https://crashkill.github.io/gestao-profissional-homolog
         EOF
 
   notify-deployment:
@@ -163,7 +163,7 @@ jobs:
     - name: 📧 Send Notification
       run: |
         if [ "${{ needs.deploy-homologacao.result }}" == "success" ]; then
-          echo "✅ Deployment successful! URL: https://crashkill.github.io/gestao-profissionais-homolog"
+          echo "✅ Deployment successful! URL: https://crashkill.github.io/gestao-profissional-homolog"
         else
           echo "⚠️ Deployment status: ${{ needs.deploy-homologacao.result }}"
         fi 

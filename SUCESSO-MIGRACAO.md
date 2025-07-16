@@ -1,10 +1,8 @@
-# 🎉 MIGRAÇÃO CONCLUÍDA COM SUCESSO!
+# Sucesso na Migração
 
-## 📊 **RESUMO EXECUTIVO**
-
-**Status:** ✅ **MIGRAÇÃO 100% CONCLUÍDA**  
-**Data:** 05/07/2025 09:08  
-**Método:** Opção 1 - Renomeação do repositório (case-sensitive fix)
+## Variáveis de Ambiente
+VITE_SUPABASE_URL: [URL_SUPABASE]
+VITE_SUPABASE_ANON_KEY: [CHAVE_SUPABASE]
 
 ---
 

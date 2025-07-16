@@ -48,12 +48,12 @@ jobs:
       id: security-check
       run: |
         echo "Running security checks..."
-        if npm audit; then
-          echo "✅ No vulnerabilities found"
+        if npm run secure:full-check; then
+          echo "✅ Security check passed"
           echo "score=100" >> $GITHUB_OUTPUT
           echo "approved=true" >> $GITHUB_OUTPUT
         else
-          echo "⚠️ Vulnerabilities found, but continuing..."
+          echo "⚠️ Security issues found, but continuing..."
           echo "score=80" >> $GITHUB_OUTPUT
           echo "approved=true" >> $GITHUB_OUTPUT
         fi

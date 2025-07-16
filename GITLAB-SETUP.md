@@ -76,11 +76,10 @@ deploy:
 
 **No GitLab (Settings > CI/CD > Variables):**
 
-| Variável | Valor | Tipo | Protegida |
-|----------|-------|------|-----------|
-| `VITE_SUPABASE_URL` | `https://pwksgdjjkryqryqrvyja.supabase.co` | Variable | ✅ |
-| `VITE_SUPABASE_ANON_KEY` | `[CHAVE_REGENERADA_NO_SUPABASE]` | Variable | ✅ |
-| `DOPPLER_TOKEN` | `dp.st.xxx` (opcional) | Variable | ✅ |
+| Variável | Valor | Tipo | Status |
+|----------|-------|------|--------|
+| `VITE_SUPABASE_URL` | `[URL_SUPABASE]` | Variable | ✅ |
+| `VITE_SUPABASE_ANON_KEY` | `[CHAVE_SUPABASE]` | Variable | ✅ |
 
 **Passos para adicionar:**
 1. Acesse: Projeto > Settings > CI/CD

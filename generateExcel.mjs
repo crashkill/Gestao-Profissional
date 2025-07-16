@@ -1,58 +1,100 @@
-import { faker } from '@faker-js/faker';
-import * as XLSX from 'xlsx';
-import { writeFile } from 'fs/promises';
+import ExcelJS from 'exceljs';
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const areas = ['Desenvolvedor Frontend', 'Desenvolvedor Backend', 'Desenvolvedor Fullstack', 'DevOps', 'QA/Tester', 'Product Owner', 'Scrum Master', 'UI/UX Designer', 'Data Scientist', 'Mobile Developer'];
-const mainSkills = ['JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin', 'React', 'Vue.js', 'Angular', 'Node.js', '.NET', 'Spring Boot'];
-const otherSkills = ['Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'PostgreSQL', 'MongoDB', 'Redis', 'GraphQL', 'REST API', 'Git', 'Jenkins', 'Terraform', 'Figma'];
-const levels = ['Júnior', 'Pleno', 'Sênior'];
-const sharePercentages = [100, 75, 50, 25, 0];
+dotenv.config();
 
-const professionals = [];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-console.log('Gerando 100 perfis de profissionais...');
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-for (let i = 0; i < 100; i++) {
-  const firstName = faker.person.firstName();
-  const lastName = faker.person.lastName();
-  const fullName = `${firstName} ${lastName}`;
-  const email = faker.internet.email({ firstName, lastName, provider: 'globalhitss.com.br' }).toLowerCase();
-
-  const availableOtherSkills = [...otherSkills];
-  const numOtherSkills = faker.number.int({ min: 1, max: 4 });
-  const selectedOtherSkills = [];
-  for(let j = 0; j < numOtherSkills; j++) {
-      const randomIndex = faker.number.int({ min: 0, max: availableOtherSkills.length - 1 });
-      selectedOtherSkills.push(availableOtherSkills.splice(randomIndex, 1)[0]);
-  }
-
-  const isShared = faker.datatype.boolean();
-
-  professionals.push({
-    'Nome Completo': fullName,
-    'Email': email,
-    'Área de Atuação': faker.helpers.arrayElement(areas),
-    'Skill Principal': faker.helpers.arrayElement(mainSkills),
-    'Nível de Experiência': faker.helpers.arrayElement(levels),
-    'Gestor da Área': faker.person.fullName(),
-    'Gestor Direto': faker.person.fullName(),
-    'Disponível para Compartilhamento': isShared ? 'Sim' : 'Não',
-    'Percentual de Compartilhamento': isShared ? faker.helpers.arrayElement(sharePercentages) : '',
-    'Outras Skills': selectedOtherSkills.join(','),
-  });
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Variáveis de ambiente do Supabase não configuradas');
 }
 
-const worksheet = XLSX.utils.json_to_sheet(professionals);
-const workbook = XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(workbook, worksheet, 'Profissionais');
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
-const filePath = './profissionais_teste_100.xlsx';
+async function generateExcel() {
+  try {
+    // Buscar dados do Supabase
+    const { data: professionals, error } = await supabase
+      .from('profissionais')
+      .select('*');
 
-writeFile(filePath, excelBuffer)
-  .then(() => {
-    console.log(`Arquivo Excel "${filePath}" criado com sucesso.`);
-  })
-  .catch((err) => {
-    console.error('Erro ao criar o arquivo Excel:', err);
-  }); 
+    if (error) {
+      throw error;
+    }
+
+    if (!professionals || professionals.length === 0) {
+      console.log('Nenhum profissional encontrado');
+      return;
+    }
+
+    // Criar novo workbook
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Profissionais');
+
+    // Definir colunas
+    worksheet.columns = [
+      { header: 'Nome Completo', key: 'nome_completo', width: 30 },
+      { header: 'Email', key: 'email', width: 20 },
+      { header: 'Área de Atuação', key: 'area_atuacao', width: 15 },
+      { header: 'Skill Principal', key: 'skill_principal', width: 30 },
+      { header: 'Nível de Experiência', key: 'nivel_experiencia', width: 15 },
+      { header: 'Gestor da Área', key: 'gestor_area', width: 25 },
+      { header: 'Gestor Direto', key: 'gestor_direto', width: 25 },
+      { header: 'Disponível para Compartilhamento', key: 'disponivel_compartilhamento', width: 20 },
+      { header: 'Percentual de Compartilhamento', key: 'percentual_compartilhamento', width: 15 },
+      { header: 'Outras Skills/Cargos', key: 'outras_tecnologias', width: 30 },
+      { header: 'Regime', key: 'regime', width: 10 },
+      { header: 'Local Alocação', key: 'local_alocacao', width: 15 },
+      { header: 'Proficiencia Cargo', key: 'proficiencia_cargo', width: 15 },
+      { header: 'Hora Última Modificação', key: 'hora_ultima_modificacao', width: 25 },
+      { header: 'Criado em', key: 'created_at', width: 20 }
+    ];
+
+    // Adicionar dados
+    professionals.forEach(professional => {
+      worksheet.addRow({
+        nome_completo: professional.nome_completo,
+        email: professional.email,
+        area_atuacao: professional.area_atuacao,
+        skill_principal: professional.skill_principal,
+        nivel_experiencia: professional.nivel_experiencia,
+        gestor_area: professional.gestor_area,
+        gestor_direto: professional.gestor_direto,
+        disponivel_compartilhamento: professional.disponivel_compartilhamento ? 'Sim' : 'Não',
+        percentual_compartilhamento: professional.percentual_compartilhamento,
+        outras_tecnologias: professional.outras_tecnologias,
+        regime: professional.regime,
+        local_alocacao: professional.local_alocacao,
+        proficiencia_cargo: professional.proficiencia_cargo,
+        hora_ultima_modificacao: professional.hora_ultima_modificacao,
+        created_at: professional.created_at
+      });
+    });
+
+    // Estilizar cabeçalho
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+
+    // Salvar arquivo
+    const outputPath = path.join(__dirname, 'profissionais_exportados.xlsx');
+    await workbook.xlsx.writeFile(outputPath);
+    console.log(`Arquivo Excel gerado com sucesso em: ${outputPath}`);
+
+  } catch (error) {
+    console.error('Erro ao gerar arquivo Excel:', error);
+    throw error;
+  }
+}
+
+generateExcel(); 

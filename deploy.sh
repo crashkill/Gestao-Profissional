@@ -38,7 +38,7 @@ if [ -z "$CI" ]; then
   git push origin main
   
   echo "🚀 Deployment triggered! Check GitHub Actions for progress."
-  echo "   The site will be available at: https://crashkill.github.io/gestao-profissionais/"
+  echo "   The site will be available at: https://crashkill.github.io/gestao-profissional/"
 else
   # CI/CD mode (GitHub Actions)
   echo "🤖 Running in CI/CD mode"

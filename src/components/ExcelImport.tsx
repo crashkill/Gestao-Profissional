@@ -2,8 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, FileSpreadsheet, Check, AlertCircle, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { Professional } from '../types/Professional';
 import { supabase } from '../lib/supabaseClient';
+import { useToast } from './ui/use-toast';
 
 // Interface para representar uma linha do arquivo Excel
 interface ExcelRow {
@@ -30,6 +32,7 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [error, setError] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const { toast } = useToast();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
