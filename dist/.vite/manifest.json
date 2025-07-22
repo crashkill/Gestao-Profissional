@@ -1,0 +1,53 @@
+{
+  "_react-DWS4CTWX.js": {
+    "file": "assets/js/react-DWS4CTWX.js",
+    "name": "react"
+  },
+  "_supabase-DDd3RIpx.js": {
+    "file": "assets/js/supabase-DDd3RIpx.js",
+    "name": "supabase",
+    "imports": [
+      "_react-DWS4CTWX.js"
+    ]
+  },
+  "_three-DJPnMVvf.js": {
+    "file": "assets/js/three-DJPnMVvf.js",
+    "name": "three",
+    "imports": [
+      "_react-DWS4CTWX.js",
+      "_ui-mA7P2aU4.js",
+      "_utils-D470gnRA.js"
+    ]
+  },
+  "_ui-mA7P2aU4.js": {
+    "file": "assets/js/ui-mA7P2aU4.js",
+    "name": "ui",
+    "imports": [
+      "_react-DWS4CTWX.js"
+    ]
+  },
+  "_utils-D470gnRA.js": {
+    "file": "assets/js/utils-D470gnRA.js",
+    "name": "utils",
+    "imports": [
+      "_react-DWS4CTWX.js",
+      "_ui-mA7P2aU4.js"
+    ]
+  },
+  "index.html": {
+    "file": "assets/js/index-BwOZXvyM.js",
+    "name": "index",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_ui-mA7P2aU4.js",
+      "_three-DJPnMVvf.js",
+      "_react-DWS4CTWX.js",
+      "_utils-D470gnRA.js",
+      "_supabase-DDd3RIpx.js"
+    ],
+    "css": [
+      "assets/css/index-DucMX5P0.css"
+    ]
+  }
+}
