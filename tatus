@@ -1,5 +1,0 @@
-[33m6a4c51c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: resolver problema de roteamento SPA no GitHub Pages
-[33ma42eb2f[m fix: remove script gptengineer.js que causava erro CORS
-[33m1013bd7[m fix: resolve conflitos mantendo versão do GitHub
-[33m5b02f68[m Remover logs de debug temporários
-[33mcdaf4ee[m Adicionar variáveis de ambiente do Supabase ao GitHub Actions
