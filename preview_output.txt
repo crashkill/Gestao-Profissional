@@ -1,0 +1,9 @@
+
+> gestao-profissional-hitss@0.0.0 preview
+> vite preview
+
+📄 Loading environment variables from producao.env
+✅ Variáveis de ambiente carregadas para ambiente: production
+  ➜  Local:   http://localhost:4173/gestao-profissional/
+  ➜  Network: http://192.168.0.41:4173/gestao-profissional/
+  ➜  press h + enter to show help

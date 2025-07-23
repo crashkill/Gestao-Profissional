@@ -2,14 +2,69 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import fs from "fs";
+
+// Definição de tipos para variáveis de ambiente
+interface EnvVars {
+  [key: string]: string | undefined;
+  BASE_URL?: string;
+  VITE_SUPABASE_URL?: string;
+  VITE_SUPABASE_ANON_KEY?: string;
+  VITE_APP_NAME?: string;
+  VITE_DEBUG_MODE?: string;
+  VITE_LOG_LEVEL?: string;
+  VITE_ENVIRONMENT?: string;
+  GITHUB_ACTIONS?: string;
+  npm_package_version?: string;
+}
+
+// Definição de tipos para ambientes
+type Environment = 'development' | 'homologacao' | 'production';
+
+// Definição de tipos para configuração de ambiente
+interface EnvironmentConfig {
+  base: string;
+  proxyTarget?: string;
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Carrega as variáveis de ambiente
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), '') as unknown as EnvVars;
+  
+  // Tenta carregar variáveis de ambiente do arquivo específico do ambiente
+  const loadEnvironmentFile = (environment: string): EnvVars => {
+    const configMap: Record<Environment, string> = {
+      'development': 'desenvolvimento.env',
+      'homologacao': 'homologacao.env',
+      'production': 'producao.env'
+    };
+    
+    const configFile = configMap[environment as Environment] || 'desenvolvimento.env';
+    const configPath = path.resolve(process.cwd(), 'config', configFile);
+    
+    if (fs.existsSync(configPath)) {
+      console.log(`📄 Loading environment variables from ${configFile}`);
+      // Usando fs para ler o arquivo em vez de require('dotenv')
+      const fileContent = fs.readFileSync(configPath, 'utf8');
+      const parsed: EnvVars = {};
+      fileContent.split('\n').forEach(line => {
+        const match = line.match(/^([^#][^=]+)=(.*)$/);
+        if (match) {
+          const key = match[1].trim();
+          const value = match[2].trim();
+          parsed[key] = value;
+        }
+      });
+      return parsed;
+    }
+    
+    console.warn(`⚠️ Environment file not found: ${configPath}`);
+    return {};
+  };
   
   // Validação do ambiente atual
-  const validateEnvironment = (mode: string): 'development' | 'homologacao' | 'production' => {
+  const validateEnvironment = (mode: string): Environment => {
     if (mode === 'production') {
       return 'production';
     } else if (mode === 'homologacao') {
@@ -18,24 +73,36 @@ export default defineConfig(({ mode }) => {
     return 'development';
   };
 
+  // Detecta o ambiente atual
+  const currentEnv: Environment = validateEnvironment(mode);
+  
+  // Carrega variáveis do arquivo de ambiente específico
+  const envFile = loadEnvironmentFile(currentEnv);
+
+  // Mescla variáveis de ambiente (prioridade: .env.local > arquivo específico > process.env)
+  const mergedEnv: EnvVars = {
+    ...(process.env as unknown as EnvVars),
+    ...envFile,
+    ...env
+  };
+  
   // Configuração de ambientes
-  const environmentConfig = {
+  const environmentConfig: Record<Environment, EnvironmentConfig> = {
     development: {
-      base: '/',
-      proxyTarget: env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+      base: mergedEnv.BASE_URL || '/',
+      proxyTarget: mergedEnv.VITE_SUPABASE_URL,
     },
     homologacao: {
-      base: '/Gestao-Profissional-Homolog/',
-      proxyTarget: env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+      base: mergedEnv.BASE_URL || '/gestao-profissional-homologacao/',
+      proxyTarget: mergedEnv.VITE_SUPABASE_URL,
     },
     production: {
-      base: '/gestao-profissional/',
-      proxyTarget: env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+      base: mergedEnv.BASE_URL || '/gestao-profissional/',
+      proxyTarget: mergedEnv.VITE_SUPABASE_URL,
     }
   };
 
-  // Detecta o ambiente atual
-  const currentEnv = validateEnvironment(mode);
+  // Obtém a configuração para o ambiente atual
   const config = environmentConfig[currentEnv];
   const isProduction = currentEnv === 'production';
 
@@ -119,17 +186,26 @@ export default defineConfig(({ mode }) => {
 
   // Validação das variáveis de ambiente
   const validateEnvVars = () => {
-    const supabaseUrl = env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseKey = env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = mergedEnv.VITE_SUPABASE_URL;
+    const supabaseKey = mergedEnv.VITE_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       if (currentEnv === 'development') {
         console.warn('⚠️ Variáveis do Doppler não encontradas. Execute: doppler run -- vite');
-      } else if (process.env.GITHUB_ACTIONS === 'true') {
+        console.warn('⚠️ Ou configure o ambiente: npm run env:dev');
+      } else if (mergedEnv.GITHUB_ACTIONS === 'true') {
         console.warn('⚠️ Variáveis do GitHub Actions não encontradas.');
       } else {
-        throw new Error('❌ Variáveis de ambiente necessárias não encontradas.');
+        console.error('❌ Variáveis de ambiente necessárias não encontradas:');
+        console.error('   - VITE_SUPABASE_URL: ' + (supabaseUrl ? '✅' : '❌'));
+        console.error('   - VITE_SUPABASE_ANON_KEY: ' + (supabaseKey ? '✅' : '❌'));
+        
+        if (currentEnv !== 'development') {
+          throw new Error('❌ Variáveis de ambiente necessárias não encontradas.');
+        }
       }
+    } else {
+      console.log(`✅ Variáveis de ambiente carregadas para ambiente: ${currentEnv}`);
     }
   };
 
@@ -162,7 +238,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      currentEnv === 'development' && componentTagger(),
+      currentEnv === 'development' ? componentTagger() : false,
     ].filter(Boolean),
     resolve: {
       alias: {
@@ -172,10 +248,14 @@ export default defineConfig(({ mode }) => {
     define: {
       __ENVIRONMENT__: JSON.stringify(currentEnv),
       __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
-      'process.env.VITE_APP_VERSION': JSON.stringify(process.env.npm_package_version),
+      'process.env.VITE_APP_VERSION': JSON.stringify(mergedEnv.npm_package_version),
       'process.env.VITE_ENVIRONMENT': JSON.stringify(currentEnv),
-      'process.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL),
-      'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY),
+      'process.env.VITE_SUPABASE_URL': JSON.stringify(mergedEnv.VITE_SUPABASE_URL),
+      'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(mergedEnv.VITE_SUPABASE_ANON_KEY),
+      'process.env.VITE_APP_NAME': JSON.stringify(mergedEnv.VITE_APP_NAME),
+      'process.env.VITE_DEBUG_MODE': JSON.stringify(mergedEnv.VITE_DEBUG_MODE),
+      'process.env.VITE_LOG_LEVEL': JSON.stringify(mergedEnv.VITE_LOG_LEVEL),
+      'process.env.BASE_URL': JSON.stringify(mergedEnv.BASE_URL || config.base),
     },
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js'],

@@ -1,0 +1,27 @@
+🧪 Testando ambiente de homologação
+=======================================================
+🔗 URL: https://zbiivgtdamejiwcabmcv.supabase.co
+=======================================================
+\n🔑 Testando com chave de serviço...
+📊 Registros em Homologação (chave de serviço): 111
+\n🔑 Testando com chave anônima...
+📊 Registros em Homologação (chave anônima): 0
+\n📋 Verificando alguns registros...
+[
+  {
+    "id": "0712df89-5c7b-4f3b-b728-064ee93b9f54",
+    "nome_completo": "MARCO AURELIO GORGULHO DRUMMOND",
+    "email": "marco.drummond@globalhitss.com.br"
+  },
+  {
+    "id": "3232eb4f-5537-4f7a-8bba-ef149a8de8e4",
+    "nome_completo": "Alexandre de Araujo Tavares",
+    "email": "alexandre.tavares@globalhitss.com.br"
+  },
+  {
+    "id": "c631cf80-9983-42e7-8db2-c5b977970eaa",
+    "nome_completo": "Jose Roberto Torres",
+    "email": "jose.torres.3@globalhitss.com.br"
+  }
+]
+\n✅ Teste concluído!

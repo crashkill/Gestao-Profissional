@@ -1,0 +1,35 @@
+#!/bin/sh
+# Pre-commit hook para verificar segredos expostos
+
+echo "🔍 Verificando segredos expostos..."
+
+# Verificar chaves do Supabase
+if git diff --cached --name-only -z | xargs -0 grep -l "VITE_SUPABASE" > /dev/null; then
+  echo "❌ ERRO: Chaves do Supabase encontradas nos arquivos a serem commitados."
+  echo "   Execute 'npm run secure:check' para mais detalhes."
+  exit 1
+fi
+
+# Verificar tokens JWT
+if git diff --cached --name-only -z | xargs -0 grep -l "eyJ[A-Za-z0-9_-]*\\.[A-Za-z0-9_-]*\\.[A-Za-z0-9_-]*" > /dev/null; then
+  echo "❌ ERRO: Tokens JWT encontrados nos arquivos a serem commitados."
+  echo "   Execute 'npm run secure:scan' para mais detalhes."
+  exit 1
+fi
+
+# Verificar API keys
+if git diff --cached --name-only -z | xargs -0 grep -l "sk-[A-Za-z0-9]*" > /dev/null; then
+  echo "❌ ERRO: API keys encontradas nos arquivos a serem commitados."
+  echo "   Execute 'npm run secure:scan' para mais detalhes."
+  exit 1
+fi
+
+# Verificar arquivos .env
+if git diff --cached --name-only | grep -E "\\.env(\\..*)?$" > /dev/null; then
+  echo "❌ ERRO: Tentativa de commit de arquivo .env"
+  echo "   Os arquivos .env não devem ser commitados. Use o Doppler para gerenciar segredos."
+  exit 1
+fi
+
+echo "✅ Nenhum segredo exposto encontrado."
+exit 0

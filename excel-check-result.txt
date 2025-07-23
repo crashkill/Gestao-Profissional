@@ -1,0 +1,10 @@
+🔍 Verificando arquivos Excel no projeto...
+\n📊 Verificando arquivo específico:
+❌ Arquivo não encontrado: ./Cadastro Colaboradores - FSW São Paulo(1-97) - Detalhada.xlsx
+\n📊 Procurando por arquivos Excel no projeto:
+./dist/Cadastro Colaboradores - FSW São Paulo(1-110).xlsx
+./profissionais_teste_100.xlsx
+./public/Cadastro Colaboradores - FSW São Paulo(1-110).xlsx
+\n📊 Verificando arquivos Excel no diretório public:
+-rw-------@ 1 fabriciocardosodelima  staff  29567 Jun 18 17:27 ./public/Cadastro Colaboradores - FSW São Paulo(1-110).xlsx
+\n✅ Verificação concluída!

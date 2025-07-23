@@ -1,0 +1,71 @@
+Informações do arquivo Excel: ./public/Cadastro Colaboradores - FSW São Paulo(1-110).xlsx
+
+Planilhas encontradas: Sheet1
+
+Planilha: Sheet1
+Total de linhas: 111
+Cabeçalhos encontrados: 29
+Lista de cabeçalhos:
+  1. ID
+  2. Hora de início
+  3. Hora de conclusão
+  4. Email
+  5. Nome
+  6. Hora da última modificação
+  7. Nome Completo
+  8. Regime
+  9. Local de Alocação
+  10. Proficiência
+  11. Java
+  12. JavaScript
+  13. Python
+  14. TypeScript
+  15. PHP
+  16. .NET
+  17. React
+  18. Angular
+  19. Ionic
+  20. Flutter
+  21. MySQL
+  22. Postgres
+  23. Oracle
+  24. SQL Server
+  25. Mongo DB
+  26. AWS
+  27. Azure
+  28. GCP
+  29. Conhece alguma outra tecnologia ou tem algum outro skill que não está na lista acima? Pode informar aqui:
+
+Exemplo (primeira linha de dados):
+  ID: 1
+  Hora de início: Fri May 23 2025 07:54:13 GMT-0300 (Brasilia Standard Time)
+  Hora de conclusão: Fri May 23 2025 07:55:18 GMT-0300 (Brasilia Standard Time)
+  Email: alexandre.tavares@globalhitss.com.br
+  Nome: Alexandre Tavares
+  Hora da última modificação: N/A
+  Nome Completo: Alexandre de Araujo Tavares
+  Regime: CLT
+  Local de Alocação: Hitss
+  Proficiência: Gerente
+  Java: Sênior
+  JavaScript: Pleno
+  Python: Pleno
+  TypeScript: Sênior
+  PHP: Pleno
+  .NET: Junior
+  React: Sênior
+  Angular: Sênior
+  Ionic: Sênior
+  Flutter: Sênior
+  MySQL: Sênior
+  Postgres: Sênior
+  Oracle: Sênior
+  SQL Server: Pleno
+  Mongo DB: Pleno
+  AWS: Pleno
+  Azure: Pleno
+  GCP: Pleno
+  Conhece alguma outra tecnologia ou tem algum outro skill que não está na lista acima? Pode informar aqui:: Delphi, Visual Basic, Basic
+
+-----------------------------------
+
