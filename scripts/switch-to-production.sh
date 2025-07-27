@@ -55,7 +55,7 @@ fi
 # Define a chave anônima de produção
 # A chave anônima permite acesso público limitado ao banco de dados
 echo "🔑 Configurando chave anônima de produção..."
-doppler secrets set VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc"
+# doppler secrets set VITE_SUPABASE_ANON_KEY="YOUR_PRODUCTION_ANON_KEY_HERE"
 if [ $? -eq 0 ]; then
     echo "✅ Chave anônima de produção configurada com sucesso"
 else

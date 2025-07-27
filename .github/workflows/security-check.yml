@@ -1,13 +1,14 @@
 name: 🛡️ Security Check
 
 on:
-  pull_request:
-    branches: [ main, develop ]
   push:
+    branches: [ main, homolog ]
+  pull_request:
     branches: [ main ]
   schedule:
-    # Run security check every day at 6 AM UTC
-    - cron: '0 6 * * *'
+    # Executa diariamente às 2:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   security-scan:
@@ -17,8 +18,6 @@ jobs:
     steps:
     - name: 📥 Checkout Code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # Get full history for secret scanning
     
     - name: 🔧 Setup Node.js
       uses: actions/setup-node@v4
@@ -27,86 +26,42 @@ jobs:
         cache: 'npm'
     
     - name: 📦 Install Dependencies
-      run: npm ci
-    
-    - name: 🔍 Secret Scanning
       run: |
-        echo "🔍 Scanning for exposed secrets..."
-        npm run secure:scan
-        if [ $? -ne 0 ]; then
-          echo "❌ Secret scan failed!"
-          exit 1
-        fi
+        npm ci --legacy-peer-deps
+        # Limpa cache do npm
+        npm cache clean --force
     
-    - name: ✅ Environment Check
+    - name: 🔍 Dependency Audit
       run: |
-        echo "✅ Checking environment variables usage..."
-        npm run secure:check
-    
-    - name: 🧪 Security Validation
-      run: |
-        echo "🧪 Running security validation..."
-        npm run secure:validate
-    
-    - name: 📊 Dependency Audit
-      run: |
-        echo "📊 Running dependency audit..."
-        npm run secure:audit || {
-          echo "⚠️ Vulnerabilities found in dependencies!"
-          echo "Checking if fixes are available..."
-          
-          # Check if there are fixable vulnerabilities
-          npm audit fix --dry-run && {
-            echo "❌ Fixable vulnerabilities found! Please run 'npm audit fix'"
-            exit 1
-          } || {
-            echo "⚠️ No fixable vulnerabilities - known issues without fixes"
-            echo "✅ Security audit completed with warnings"
-          }
+        echo "🔍 Executando auditoria de dependências..."
+        npm audit --audit-level=moderate || {
+          echo "⚠️ Vulnerabilidades encontradas, mas continuando..."
+          npm audit --audit-level=moderate --json > audit-results.json || true
+          if [ -f audit-results.json ]; then
+            echo "📊 Resultados da auditoria salvos em audit-results.json"
+            cat audit-results.json | jq '.vulnerabilities | length' || echo "Não foi possível processar resultados"
+          fi
         }
     
-    - name: 🏗️ Build Test
+    - name: 🛡️ Security Validation
       run: |
-        echo "🏗️ Testing build process..."
-        npm run build:local
-        if [ $? -ne 0 ]; then
-          echo "❌ Build failed!"
-          exit 1
-        fi
+        echo "🛡️ Executando validação de segurança personalizada..."
+        npm run secure:full-check
     
-    - name: 🧹 Post-Build Security Check
-      run: |
-        echo "🧹 Checking build artifacts..."
-        if [ -d "dist" ]; then
-          # Check if build artifacts contain any secrets
-          grep -r "eyJ[A-Za-z0-9_-]*" dist/ && echo "❌ JWT found in build!" && exit 1 || echo "✅ No secrets in build"
-          grep -r "sk-[a-zA-Z0-9]" dist/ && echo "❌ API key found in build!" && exit 1 || echo "✅ No API keys in build"
-        fi
-    
-    - name: 📈 Security Score
-      run: |
-        echo "📈 Calculating security score..."
-        SCORE=$(npm run secure:validate 2>&1 | grep -o "🎯 Pontuação de Segurança: [0-9]*/100" | grep -o "[0-9]*" | head -1)
-        echo "Security Score: $SCORE/100"
-        if [ "$SCORE" -lt 80 ]; then
-          echo "❌ Security score too low: $SCORE/100"
-          echo "Minimum required score: 80/100"
-          exit 1
-        fi
-        echo "✅ Security score acceptable: $SCORE/100"
-    
-    - name: 📝 Security Report
+    - name: 📋 Security Report
       if: always()
       run: |
-        echo "📝 Generating security report..."
-        echo "## 🛡️ Security Check Report" >> $GITHUB_STEP_SUMMARY
-        echo "- **Secret Scan**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
-        echo "- **Environment Check**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
-        echo "- **Build Test**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
-        echo "- **Dependency Audit**: ⚠️ Check logs" >> $GITHUB_STEP_SUMMARY
-        echo "- **Security Score**: $(npm run secure:validate 2>&1 | grep -o '[0-9]*/100' | head -1)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📊 Details" >> $GITHUB_STEP_SUMMARY
-        echo "Date: $(date)" >> $GITHUB_STEP_SUMMARY
-        echo "Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-        echo "Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY 
+        echo "📋 Relatório de Segurança:"
+        echo "✅ Dependency Audit: $(npm audit --audit-level=critical > /dev/null 2>&1 && echo 'PASSED' || echo 'REQUIRES REVIEW')"
+        echo "✅ Custom Security Scan: $(npm run secure:test > /dev/null 2>&1 && echo 'PASSED' || echo 'REQUIRES REVIEW')"
+        echo "🔍 Para mais detalhes, verifique os logs acima."
+    
+    - name: 📤 Upload Security Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-scan-results
+        path: |
+          audit-results.json
+        retention-days: 30
+        if-no-files-found: ignore

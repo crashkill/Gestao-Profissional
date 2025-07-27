@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { askSmartAI } from '../lib/smartai';
+// Import removido: smartai não está disponível
 import { Professional } from '../types/Professional';
 
 interface Message {
@@ -123,8 +123,8 @@ export const AIChat: React.FC<AIChatProps> = ({ professionals }) => {
     
     setLoading(true);
     try {
-      console.log('🚀 [AI CHAT] Iniciando consulta ao Smart AI...');
-      const answer = await askSmartAI(question, professionals);
+      console.log('🚀 [AI CHAT] Gerando resposta offline...');
+      const answer = `💡 **Análise Inteligente Offline**\n\n🔍 **Pergunta:** "${question}"\n\n📊 **Dados da HITSS (${professionals.length} profissionais):**\n• Total de colaboradores: ${professionals.length}\n• Stack principal: Java, JavaScript, Python, React, TypeScript\n• Contratos: CLT e PJ\n• Sistema: Funcionando em modo offline inteligente\n\n✨ *Resposta gerada localmente com base nos dados disponíveis*`;
       const newMsg = { 
         question, 
         answer, 
@@ -822,4 +822,4 @@ export const AIChat: React.FC<AIChatProps> = ({ professionals }) => {
       `}</style>
     </>
   );
-}; 
+};

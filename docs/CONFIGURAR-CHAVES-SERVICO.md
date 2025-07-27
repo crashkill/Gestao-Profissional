@@ -83,7 +83,7 @@ doppler run -- ./scripts/migrate-prod-to-homolog.sh
 ### **Formato das Chaves:**
 ```
 # Anon Key (já configurada)
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IlNFVV9QUk9KRUNUX0lEIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDAwMDAwMDAsImV4cCI6MjAwMDAwMDAwMH0.EXEMPLO_DE_ANON_KEY
 
 # Service Role Key (precisa configurar)
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODU2MDA0OCwiZXhwIjoyMDY0MTM2MDQ4fQ.EXEMPLO_DE_SERVICE_KEY
@@ -198,5 +198,5 @@ doppler run -- ./scripts/migrate-prod-to-homolog.sh
 
 # Configurar ambiente de desenvolvimento para usar homologação
 doppler secrets set VITE_SUPABASE_URL="https://zbiivgtdamejiwcabmcv.supabase.co"
-doppler secrets set VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiaWl2Z3RkYW1laml3Y2FibWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExOTA5NTYsImV4cCI6MjA2Njc2Njk1Nn0.qrXX_H0dqN5HP3_-TQUUTyIpb_-oauRBmwj8vyaKMe4"
+doppler secrets set VITE_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY_HERE"
 ```

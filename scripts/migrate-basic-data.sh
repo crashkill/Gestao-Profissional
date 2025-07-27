@@ -11,8 +11,8 @@ PROD_URL="https://pwksgdjjkryqryqrvyja.supabase.co"
 HOMOLOG_URL="https://zbiivgtdamejiwcabmcv.supabase.co"
 
 # 🔐 Chaves Anônimas (do Doppler)
-PROD_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc"
-HOMOLOG_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiaWl2Z3RkYW1laml3Y2FibWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExOTA5NTYsImV4cCI6MjA2Njc2Njk1Nn0.qrXX_H0dqN5HP3_-TQUUTyIpb_-oauRBmwj8vyaKMe4"
+PROD_ANON_KEY="YOUR_PRODUCTION_ANON_KEY_HERE"
+HOMOLOG_ANON_KEY="YOUR_HOMOLOG_ANON_KEY_HERE"
 
 # 📁 Arquivo temporário para dados
 TEMP_DATA_FILE="/tmp/colaboradores_backup.json"

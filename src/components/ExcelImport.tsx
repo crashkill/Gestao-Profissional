@@ -184,7 +184,7 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
         outras_tecnologias: skillsForThisRow.map(s => `${s.nome} (${s.tipo})`).join(', '),
         hora_ultima_modificacao: new Date().toISOString(),
         disponivel_compartilhamento: row['Disponível para Compartilhamento']?.toLowerCase() === 'sim',
-        percentual_compartilhamento: row['Percentual de Compartilhamento'] || null,
+        percentual_compartilhamento: row['Percentual de Compartilhamento'] ? Number(row['Percentual de Compartilhamento']) : null,
         regime: null, local_alocacao: null, proficiencia_cargo: null, java: null, javascript: null, python: null, typescript: null, php: null, dotnet: null, react: null, angular: null, ionic: null, flutter: null, mysql: null, postgres: null, oracle_db: null, sql_server: null, mongodb: null, aws: null, azure: null, gcp: null, gerencia_projetos: null, administracao_projetos: null, analise_requisitos: null, android: null, cobol: null, linguagem_r: null, linguagem_c: null, linguagem_cpp: null, windows: null, raspberry_pi: null, arduino: null
       };
     }));

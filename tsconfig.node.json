@@ -21,8 +21,8 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "analyzeExcel.ts",
-    "uploadToSupabase.ts"
+    "vite.config.ts",
+    "scripts/**/*"
   ],
   "exclude": [
     "node_modules",

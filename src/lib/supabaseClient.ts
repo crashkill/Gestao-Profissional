@@ -65,4 +65,4 @@ export const executeSupabaseQuery = async <T>(queryFn: (client: any) => Promise<
       throw directError;
     }
   }
-}; 
+};

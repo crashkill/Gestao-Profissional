@@ -7,7 +7,7 @@ set -e  # Parar em caso de erro
 # 🎯 Configurações do Projeto de Homologação
 HOMOLOG_PROJECT_ID="zbiivgtdamejiwcabmcv"
 HOMOLOG_URL="https://zbiivgtdamejiwcabmcv.supabase.co"
-HOMOLOG_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiaWl2Z3RkYW1laml3Y2FibWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExOTA5NTYsImV4cCI6MjA2Njc2Njk1Nn0.qrXX_H0dqN5HP3_-TQUUTyIpb_-oauRBmwj8vyaKMe4"
+HOMOLOG_ANON_KEY="YOUR_HOMOLOG_ANON_KEY_HERE"
 
 echo "🔐 Configurando Políticas RLS para Homologação"
 echo "============================================="

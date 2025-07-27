@@ -125,7 +125,7 @@ doppler secrets get VITE_SUPABASE_ANON_KEY
 doppler secrets set VITE_SUPABASE_URL="https://zbiivgtdamejiwcabmcv.supabase.co"
 
 # Configurar chave de homologação
-doppler secrets set VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiaWl2Z3RkYW1laml3Y2FibWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExOTA5NTYsImV4cCI6MjA2Njc2Njk1Nn0.qrXX_H0dqN5HP3_-TQUUTyIpb_-oauRBmwj8vyaKMe4"
+doppler secrets set VITE_SUPABASE_ANON_KEY="YOUR_HOMOLOG_ANON_KEY_HERE"
 ```
 
 **Para usar PRODUÇÃO em desenvolvimento (cuidado!):**
@@ -134,7 +134,7 @@ doppler secrets set VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
 doppler secrets set VITE_SUPABASE_URL="https://pwksgdjjkryqryqrvyja.supabase.co"
 
 # Configurar chave de produção
-doppler secrets set VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc"
+doppler secrets set VITE_SUPABASE_ANON_KEY="YOUR_PRODUCTION_ANON_KEY_HERE"
 ```
 
 ### 3.3 **Verificar Conexão com Supabase**

@@ -57,7 +57,7 @@ export const ProfessionalForm: React.FC<ProfessionalFormProps> = ({
     mainSkill: initialData.skill_principal || '',
     level: (initialData.nivel_experiencia as 'Júnior' | 'Pleno' | 'Sênior') || 'Júnior',
     disponivel_compartilhamento: initialData.disponivel_compartilhamento || false,
-    percentual_compartilhamento: initialData.percentual_compartilhamento as '100' | '75' | '50' | '25' | null || null,
+    percentual_compartilhamento: initialData.percentual_compartilhamento ? String(initialData.percentual_compartilhamento) as '100' | '75' | '50' | '25' : null,
     gestor_area: initialData.gestor_area || '',
     gestor_direto: initialData.gestor_direto || ''
   });
@@ -80,30 +80,13 @@ export const ProfessionalForm: React.FC<ProfessionalFormProps> = ({
       if (data) {
         setSkills(data);
         
-        // If we have initial data with outras_tecnologias, parse and set selected skills
-        if (initialData.outras_tecnologias) {
-          const skillsText = initialData.outras_tecnologias;
-          const skillsList = skillsText.split(',').map(s => s.trim());
-          
-          const selectedSkillsFromData = skillsList
-            .map(skillText => {
-              const match = skillText.match(/^(.*?)\s*\((.*?)\)$/);
-              if (match) {
-                const [, nome, tipo] = match;
-                const existingSkill = data.find(s => s.nome === nome && s.tipo === tipo);
-                return existingSkill;
-              }
-              return null;
-            })
-            .filter(Boolean) as Skill[];
-            
-          setSelectedSkills(selectedSkillsFromData);
-        }
+        // Initialize selected skills
+        setSelectedSkills([]);
       }
     };
     
     loadSkills();
-  }, [initialData.outras_tecnologias]);
+  }, []);
 
   /**
    * Handle skill selection
@@ -157,49 +140,15 @@ export const ProfessionalForm: React.FC<ProfessionalFormProps> = ({
 
     // Create professional object from form data
     const professional: Omit<Professional, 'id' | 'created_at'> = {
-      email: formData.email,
       nome_completo: formData.name,
+      email: formData.email,
       area_atuacao: formData.area,
       skill_principal: formData.mainSkill,
       nivel_experiencia: formData.level,
-      hora_ultima_modificacao: new Date().toISOString(),
-      regime: 'CLT',
-      local_alocacao: null,
-      proficiencia_cargo: null,
-      java: null,
-      javascript: null,
-      python: null,
-      typescript: null,
-      php: null,
-      dotnet: null,
-      react: null,
-      angular: null,
-      ionic: null,
-      flutter: null,
-      mysql: null,
-      postgres: null,
-      oracle_db: null,
-      sql_server: null,
-      mongodb: null,
-      aws: null,
-      azure: null,
-      gcp: null,
-      outras_tecnologias: selectedSkills.map(s => `${s.nome} (${s.tipo})`).join(', '),
-      android: null,
-      cobol: null,
-      linguagem_r: null,
-      linguagem_c: null,
-      linguagem_cpp: null,
-      windows: null,
-      raspberry_pi: null,
-      arduino: null,
       disponivel_compartilhamento: formData.disponivel_compartilhamento,
-      percentual_compartilhamento: formData.disponivel_compartilhamento ? formData.percentual_compartilhamento : null,
+      percentual_compartilhamento: formData.disponivel_compartilhamento ? Number(formData.percentual_compartilhamento) : null,
       gestor_area: formData.gestor_area,
-      gestor_direto: formData.gestor_direto,
-      gerencia_projetos: null,
-      administracao_projetos: null,
-      analise_requisitos: null
+      gestor_direto: formData.gestor_direto
     };
 
     // Set skill level in the appropriate column
@@ -423,7 +372,6 @@ export const ProfessionalForm: React.FC<ProfessionalFormProps> = ({
                 placeholder="Buscar skill/cargo..."
                 value={skillSearch}
                 onValueChange={setSkillSearch}
-                disabled={isLoading}
               />
               <CommandList>
                 {skills.filter(skill => skill.nome.toLowerCase().includes(skillSearch.toLowerCase())).map(skill => (
