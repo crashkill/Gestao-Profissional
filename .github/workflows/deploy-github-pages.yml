@@ -46,11 +46,11 @@ jobs:
         if [ "${{ github.ref }}" = "refs/heads/homolog" ]; then
           echo "Building for homologation..."
           export VITE_ENVIRONMENT=homologacao
-          npm run build -- --mode homologacao
+          npm run build:homologacao
         else
-          echo "Building for production..."
+          echo "Building for production GitHub Pages..."
           export VITE_ENVIRONMENT=production
-          npm run build -- --mode production
+          npm run build:gh-pages
         fi
       env:
         VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
