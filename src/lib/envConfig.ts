@@ -114,10 +114,19 @@ function validateConfig(config: EnvironmentConfig): void {
   if (!config.supabaseAnonKey) missingVars.push('VITE_SUPABASE_ANON_KEY');
 
   if (missingVars.length > 0) {
-    // In development, just warn
-    if (config.environment === 'development') {
+    // Check if running on Vercel
+    const isVercel = typeof window !== 'undefined' && 
+      (window.location.hostname.includes('vercel.app') || 
+       window.location.hostname.includes('vercel.com'));
+    
+    // In development or Vercel, just warn
+    if (config.environment === 'development' || isVercel) {
       console.warn(`⚠️ Missing environment variables: ${missingVars.join(', ')}`);
-      console.warn('⚠️ Make sure to run with Doppler: doppler run -- vite');
+      if (config.environment === 'development') {
+        console.warn('⚠️ Make sure to run with Doppler: doppler run -- vite');
+      } else if (isVercel) {
+        console.warn('⚠️ Check Environment Variables in Vercel dashboard');
+      }
     } else {
       // In other environments, throw an error
       throw new Error(`❌ Required environment variables missing: ${missingVars.join(', ')}`);

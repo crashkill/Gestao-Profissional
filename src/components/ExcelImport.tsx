@@ -199,145 +199,219 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
 
   if (showSuccess) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
-      >
-        <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border border-white/20 text-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center min-h-[60vh] text-center"
+        >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6"
           >
-            <Check className="h-8 w-8 text-white" />
+            <Check className="w-10 h-10 text-white" />
           </motion.div>
-          <h3 className="text-2xl font-bold text-white mb-2">
-            {previewData.length} Profissionais Importados!
-          </h3>
-          <p className="text-slate-300">Redirecionando para o dashboard...</p>
-        </div>
-      </motion.div>
+          <h2 className="text-3xl font-bold text-white mb-4">Importação Concluída!</h2>
+          <p className="text-slate-300 mb-8">Os profissionais foram importados com sucesso.</p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onBack}
+            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg"
+          >
+            Voltar ao Dashboard
+          </motion.button>
+        </motion.div>
+      </div>
     );
   }
 
   if (showPreview) {
     return (
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="p-8"
-      >
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <button
-                  onClick={() => setShowPreview(false)}
-                  className="p-2 hover:bg-white/10 rounded-full transition-colors mr-4"
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="max-w-7xl mx-auto"
+        >
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative mb-8"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl blur-xl" />
+            <div className="relative bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setShowPreview(false)}
+                    className="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all duration-300 border border-slate-600/50"
+                  >
+                    <ArrowLeft className="h-6 w-6 text-white" />
+                  </motion.button>
+                  <div>
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                      Prévia dos Dados
+                    </h2>
+                    <p className="text-slate-300 text-lg">{previewData.length} profissionais encontrados</p>
+                  </div>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={processImport}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  <ArrowLeft className="h-6 w-6 text-white" />
-                </button>
-                <h2 className="text-2xl font-bold text-white">
-                  Prévia dos Dados ({previewData.length} profissionais)
-                </h2>
+                  Confirmar Importação
+                </motion.button>
               </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={processImport}
-                className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300"
-              >
-                Confirmar Importação
-              </motion.button>
             </div>
-            <div className="overflow-auto max-h-96">
+          </motion.div>
+
+          {/* Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden"
+          >
+            <div className="overflow-auto max-h-[600px]">
               <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-slate-800/80 backdrop-blur-sm">
-                  <tr className="border-b border-white/20">
+                <thead className="sticky top-0 bg-slate-800/90 backdrop-blur-sm">
+                  <tr className="border-b border-slate-600/50">
                     {previewData.length > 0 && Object.keys(previewData[0]).map((key) => (
-                      <th key={key} className="text-left p-3 text-slate-300">{key}</th>
+                      <th key={key} className="text-left p-4 text-slate-200 font-semibold">{key}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {previewData.slice(0, 100).map((row, index) => (
-                    <tr key={index} className="border-b border-white/10 hover:bg-white/5">
+                    <motion.tr
+                      key={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.01 }}
+                      className="border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors duration-200"
+                    >
                       {Object.keys(row).map((key) => (
-                        <td key={key} className="p-3 text-white">
+                        <td key={key} className="p-4 text-slate-100">
                           {String(row[key as keyof ExcelRow] ?? '')}
                         </td>
                       ))}
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
             </div>
             {previewData.length > 100 && (
-              <p className="text-slate-400 text-center mt-4">
-                ...e mais {previewData.length - 100} profissionais
-              </p>
+              <div className="p-4 bg-slate-700/30 border-t border-slate-600/50">
+                <p className="text-slate-400 text-center font-medium">
+                  ...e mais {previewData.length - 100} profissionais
+                </p>
+              </div>
             )}
-          </div>
-        </div>
-      </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="p-8"
-    >
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       <div className="max-w-4xl mx-auto">
-        <button onClick={onBack} className="flex items-center text-slate-300 hover:text-white mb-8">
-          <ArrowLeft className="h-5 w-5 mr-2" />
-          Voltar
-        </button>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative mb-12"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl blur-xl" />
+          <div className="relative bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8">
+            <div className="flex items-center gap-6">
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: -5 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onBack}
+                className="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all duration-300 border border-slate-600/50"
+              >
+                <ArrowLeft className="w-6 h-6 text-white" />
+              </motion.button>
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                  Importar do Excel
+                </h1>
+                <p className="text-slate-300 text-lg">Faça upload de uma planilha Excel para importar profissionais</p>
+              </div>
+            </div>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mt-6"
+            />
+          </div>
+        </motion.div>
 
-        <h1 className="text-4xl font-bold text-white mb-4">Importar Profissionais</h1>
-        <p className="text-slate-400 mb-8">
-          Faça o upload de um arquivo .xlsx para adicionar múltiplos profissionais de uma vez.
-        </p>
-
-        <div 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-2xl p-8 text-center transition-colors duration-300 ${dragActive ? 'border-blue-500 bg-blue-500/10' : 'border-slate-600 hover:border-slate-500'}`}
+          className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${dragActive ? 'border-purple-500 bg-purple-500/10 scale-105' : 'border-slate-600/50 hover:border-slate-500/70 bg-slate-800/30'}`}
         >
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-blue-600/5 rounded-2xl" />
           <input type="file" id="file-upload" className="hidden" accept=".xlsx" onChange={handleFileInput} />
-          <label htmlFor="file-upload" className="cursor-pointer">
-            <FileSpreadsheet className="h-16 w-16 mx-auto text-slate-400 mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">
+          <label htmlFor="file-upload" className="cursor-pointer relative z-10">
+            <motion.div
+              animate={dragActive ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <FileSpreadsheet className="h-20 w-20 mx-auto text-slate-400 mb-6" />
+            </motion.div>
+            <h3 className="text-2xl font-bold text-white mb-3">
               {dragActive ? 'Solte o arquivo aqui' : 'Arraste e solte ou clique para enviar'}
             </h3>
-            <p className="text-slate-500">Apenas arquivos .xlsx são permitidos</p>
+            <p className="text-slate-400 text-lg">Apenas arquivos .xlsx são permitidos</p>
           </label>
-        </div>
+        </motion.div>
 
         {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-6 bg-red-500/20 border border-red-500/50 text-red-300 p-4 rounded-lg flex items-center"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-center gap-3 backdrop-blur-sm"
           >
-            <AlertCircle className="h-5 w-5 mr-3" />
-            <span>{error}</span>
+            <AlertCircle className="h-6 w-6 text-red-400 flex-shrink-0" />
+            <span className="text-red-300 font-medium">{error}</span>
           </motion.div>
         )}
 
-        <div className="mt-8 text-center">
-            <button onClick={generateTemplate} className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
-                <Download className="h-5 w-5 mr-2"/>
-                Baixar modelo de planilha
-            </button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="mt-8 flex justify-center"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={generateTemplate}
+            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            <Download className="h-5 w-5" />
+            Baixar Modelo de Planilha
+          </motion.button>
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

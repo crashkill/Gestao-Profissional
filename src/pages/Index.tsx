@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Dashboard from '../components/Dashboard';
 import ManualForm from '../components/ManualForm';
 import ExcelImport from '../components/ExcelImport';
@@ -22,7 +23,7 @@ const Index = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('profiles')
+        .from('colaboradores')
         .select('*');
       
       if (error) {
@@ -38,7 +39,7 @@ const Index = () => {
     }
   };
 
-  const handleNavigate = (view: 'manual' | 'excel' | 'ai-chat') => {
+  const handleNavigate = (view: 'manual' | 'excel' | 'ai-chat' | 'dashboard') => {
     setCurrentView(view);
   };
 
@@ -50,7 +51,7 @@ const Index = () => {
   const handleProfessionalSubmit = async (professional: Omit<Professional, 'id' | 'created_at'>) => {
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('colaboradores')
         .insert([professional]);
       
       if (error) {
@@ -67,7 +68,7 @@ const Index = () => {
   const handleExcelImport = async (professionals: Omit<Professional, 'id' | 'created_at'>[]) => {
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('colaboradores')
         .insert(professionals);
       
       if (error) {
@@ -97,11 +98,60 @@ const Index = () => {
       <WebGLBackground />
       
       {currentView === 'dashboard' && (
-        <Dashboard 
-          professionals={professionals} 
-          onNavigate={handleNavigate}
-        />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+          {/* Header */}
+          <motion.header 
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative z-10 text-center py-16 px-6"
+          >
+            <div className="max-w-4xl mx-auto">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="text-5xl md:text-7xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400 bg-clip-text text-transparent leading-tight"
+              >
+                Gestão Profissional HITSS
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="text-slate-300 text-xl font-light tracking-wide"
+              >
+                Gerencie profissionais de TI com facilidade e elegância
+              </motion.p>
+              
+              {/* Decorative line */}
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: "100px" }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="h-[2px] bg-gradient-to-r from-purple-500 to-blue-500 mt-6 mx-auto"
+              ></motion.div>
+              
+
+            </div>
+          </motion.header>
+
+          <main className="max-w-7xl mx-auto px-6 pb-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+            >
+              <Dashboard 
+                professionals={professionals} 
+                onNavigate={handleNavigate}
+              />
+            </motion.div>
+          </main>
+         </div>
       )}
+      
+
       
       {currentView === 'manual' && (
         <ManualForm 
@@ -121,6 +171,11 @@ const Index = () => {
         <AIChat 
           professionals={professionals}
         />
+      )}
+      
+      {/* Chat lateral de IA */}
+      {currentView === 'dashboard' && (
+        <AIChat professionals={professionals} />
       )}
     </div>
   );

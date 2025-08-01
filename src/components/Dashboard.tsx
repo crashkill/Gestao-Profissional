@@ -264,7 +264,11 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
         gestor_direto: professional.gestor_direto,
         disponivel_compartilhamento: professional.disponivel_compartilhamento ? 'Sim' : 'Não',
         percentual_compartilhamento: professional.percentual_compartilhamento,
-        // Propriedades removidas: outras_tecnologias, regime, local_alocacao, proficiencia_cargo, hora_ultima_modificacao
+        outras_tecnologias: professional.outras_tecnologias,
+        regime: professional.regime,
+        local_alocacao: professional.local_alocacao,
+        proficiencia_cargo: professional.proficiencia_cargo,
+        hora_ultima_modificacao: professional.hora_ultima_modificacao,
         created_at: professional.created_at
       });
     });

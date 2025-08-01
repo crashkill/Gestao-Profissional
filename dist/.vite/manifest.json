@@ -3,8 +3,8 @@
     "file": "assets/js/react-DByLpybc.js",
     "name": "react"
   },
-  "_supabase-BeY_DX35.js": {
-    "file": "assets/js/supabase-BeY_DX35.js",
+  "_supabase-ZNZB6a3j.js": {
+    "file": "assets/js/supabase-ZNZB6a3j.js",
     "name": "supabase",
     "imports": [
       "_react-DByLpybc.js"
@@ -35,7 +35,7 @@
     ]
   },
   "index.html": {
-    "file": "assets/js/index-C6Yarapa.js",
+    "file": "assets/js/index-DXm5-sE4.js",
     "name": "index",
     "src": "index.html",
     "isEntry": true,
@@ -44,10 +44,10 @@
       "_three-iAuN98JL.js",
       "_react-DByLpybc.js",
       "_utils-C9sSRhl1.js",
-      "_supabase-BeY_DX35.js"
+      "_supabase-ZNZB6a3j.js"
     ],
     "css": [
-      "assets/css/index-C4K84W1x.css"
+      "assets/css/index-Cm9evm_F.css"
     ]
   }
 }

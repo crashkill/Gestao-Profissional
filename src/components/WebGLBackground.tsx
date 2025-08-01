@@ -3,83 +3,76 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
+// Campo de partículas simples
 const ParticleField = () => {
   const ref = useRef<THREE.Points>(null);
   
-  const particles = React.useMemo(() => {
-    const temp = new Float32Array(2000 * 3);
-    for (let i = 0; i < 2000; i++) {
-      temp[i * 3] = (Math.random() - 0.5) * 20;
-      temp[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      temp[i * 3 + 2] = (Math.random() - 0.5) * 20;
-    }
-    return temp;
-  }, []);
+  const particleCount = 1000;
+  const positions = new Float32Array(particleCount * 3);
+  
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+  }
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.3;
-      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.2;
-      ref.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.05) * 0.1;
+      ref.current.rotation.x = state.clock.elapsedTime * 0.05;
+      ref.current.rotation.y = state.clock.elapsedTime * 0.075;
     }
   });
 
   return (
-    <Points ref={ref} positions={particles} stride={3} frustumCulled={false}>
+    <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#ffffff"
-        size={0.015}
+        color="#8b5cf6"
+        size={0.02}
         sizeAttenuation={true}
         depthWrite={false}
-        opacity={0.8}
       />
     </Points>
   );
 };
 
+// Orbe flutuante simples
 const FloatingOrb = ({ position }: { position: [number, number, number] }) => {
   const ref = useRef<THREE.Mesh>(null);
-  
+  const startPosition = position;
+
   useFrame((state) => {
     if (ref.current) {
-      ref.current.position.x = position[0] + Math.sin(state.clock.elapsedTime * 0.7 + position[0]) * 0.8;
-      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5 + position[1]) * 0.6;
-      ref.current.position.z = position[2] + Math.sin(state.clock.elapsedTime * 0.6 + position[2]) * 0.4;
-      
-      ref.current.rotation.x += 0.005;
-      ref.current.rotation.y += 0.008;
-      
-      // Pulsing glow effect
-      const scale = 1 + Math.sin(state.clock.elapsedTime * 2 + position[0]) * 0.3;
-      ref.current.scale.setScalar(scale);
+      ref.current.position.y = startPosition[1] + Math.sin(state.clock.elapsedTime * 0.5) * 2;
+      ref.current.position.x = startPosition[0] + Math.cos(state.clock.elapsedTime * 0.3) * 1;
+      ref.current.rotation.x = state.clock.elapsedTime * 0.2;
+      ref.current.rotation.y = state.clock.elapsedTime * 0.3;
     }
   });
 
   return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[0.4, 32, 32]} />
-      <meshPhongMaterial 
-        color="#8b5cf6" 
+    <mesh ref={ref} position={startPosition}>
+      <sphereGeometry args={[0.3, 16, 16]} />
+      <meshBasicMaterial 
+        color="#3b82f6" 
         transparent 
-        opacity={0.3}
-        emissive="#4c1d95"
-        emissiveIntensity={0.4}
+        opacity={0.6}
+        wireframe
       />
     </mesh>
   );
 };
 
+// Estrela cadente simples
 const ShootingStar = ({ startPosition }: { startPosition: [number, number, number] }) => {
   const ref = useRef<THREE.Mesh>(null);
-  
+
   useFrame((state) => {
     if (ref.current) {
-      const speed = 0.1;
-      ref.current.position.x += speed;
-      ref.current.position.y -= speed * 0.3;
+      // Move the star from left to right
+      ref.current.position.x += 0.1;
       
-      // Reset position when star goes out of bounds
+      // Reset when star goes out of bounds
       if (ref.current.position.x > 15) {
         ref.current.position.x = -15;
         ref.current.position.y = startPosition[1] + (Math.random() - 0.5) * 10;

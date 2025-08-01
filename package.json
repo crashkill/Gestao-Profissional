@@ -16,13 +16,19 @@
     "dev:local": "node scripts/switch-environment.cjs development && doppler run -- vite",
     "dev:homologacao": "node scripts/switch-environment.cjs homologacao && vite --mode homologacao",
     "dev:production": "node scripts/switch-environment.cjs production && vite --mode production",
-    "dev:fallback": "node scripts/doppler-fallback.js vite",
-    "build": "tsc -b && node scripts/load-env.js && vite build",
+    "dev:fallback": "node scripts/doppler-fallback.js \"vite\"",
+    "build": "tsc -b && vite build",
     "build:local": "tsc -b && node scripts/switch-environment.cjs development && vite build",
+    "build:development": "tsc -b && node scripts/switch-environment.cjs development && vite build --mode development",
     "build:homologacao": "tsc -b && node scripts/switch-environment.cjs homologacao && vite build --mode homologacao",
     "build:production": "tsc -b && node scripts/switch-environment.cjs production && vite build --mode production",
     "build:gh-pages": "tsc -b && node scripts/switch-environment.cjs production && vite build --mode production --base=/gestao-profissional/",
+    "build:vercel": "tsc -b && node scripts/switch-environment.cjs production && vite build --mode production",
     "build:fallback": "node scripts/doppler-fallback.js \"tsc -b && vite build\"",
+    "vercel:deploy": "vercel --prod",
+    "vercel:preview": "vercel",
+    "vercel:env": "vercel env pull .env.vercel",
+    "deploy:all": "npm run build:gh-pages && git add dist && git commit -m 'Deploy: GitHub Pages' && git push && npm run vercel:deploy",
     "lint": "eslint .",
     "preview": "vite preview",
     "analyze-excel": "tsc analyzeExcel.ts --outDir ./dist-scripts && node ./dist-scripts/analyzeExcel.js",
@@ -60,7 +66,7 @@
     "secure:monitor": "node scripts/security-monitor.js --monitor",
     "test:security": "npm run secure:full-check",
     "monitor:security": "node scripts/security-monitor.js",
-    "postinstall": "npm run secure:install-hooks"
+    "postinstall": "if [ -d .git ]; then npm run secure:install-hooks; else echo 'Skipping Git hooks installation (not a Git repository)'; fi"
   },
   "browserslist": {
     "production": [

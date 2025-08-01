@@ -1,0 +1,94 @@
+name: 🚀 Deploy to Vercel
+
+on:
+  push:
+    branches: [ main, homolog ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Configura permissões
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to Vercel
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: 📦 Install Dependencies
+      run: |
+        npm ci --legacy-peer-deps
+        # Limpa cache do Vite
+        rm -rf node_modules/.vite
+    
+    - name: 🔧 Install Vercel CLI
+      run: npm install --global vercel@latest
+    
+    - name: 🔍 Pull Vercel Environment Information
+      run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+    
+    - name: 🏗️ Build Project for Vercel
+      run: |
+        if [ "${{ github.ref }}" = "refs/heads/homolog" ]; then
+          echo "Building for homologation on Vercel..."
+          export VITE_ENVIRONMENT=homologacao
+          npm run build:vercel
+        else
+          echo "Building for production on Vercel..."
+          export VITE_ENVIRONMENT=production
+          npm run build:vercel
+        fi
+      env:
+        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    
+    - name: 🚀 Deploy to Vercel
+      run: |
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        else
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        fi
+    
+    - name: 📝 Get Deployment URL
+      id: deployment
+      run: |
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          echo "url=https://gestao-profissional-hitss.vercel.app" >> $GITHUB_OUTPUT
+        else
+          # Para branches de preview, a URL será gerada automaticamente pelo Vercel
+          echo "url=Preview deployment created" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 📋 Comment PR with Deployment URL
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '🚀 **Vercel Preview Deployment**\n\n✅ Deployment completed successfully!\n\n🔗 **Preview URL:** Check the Vercel dashboard for the preview URL.'
+          })
+    
+    - name: ✅ Deployment Success
+      run: |
+        echo "🎉 Deployment to Vercel completed successfully!"
+        echo "📍 URL: ${{ steps.deployment.outputs.url }}"

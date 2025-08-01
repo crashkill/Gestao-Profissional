@@ -188,6 +188,7 @@ export default defineConfig(({ mode }) => {
   const validateEnvVars = () => {
     const supabaseUrl = mergedEnv.VITE_SUPABASE_URL;
     const supabaseKey = mergedEnv.VITE_SUPABASE_ANON_KEY;
+    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
 
     if (!supabaseUrl || !supabaseKey) {
       if (currentEnv === 'development') {
@@ -195,6 +196,11 @@ export default defineConfig(({ mode }) => {
         console.warn('⚠️ Ou configure o ambiente: npm run env:dev');
       } else if (mergedEnv.GITHUB_ACTIONS === 'true') {
         console.warn('⚠️ Variáveis do GitHub Actions não encontradas.');
+      } else if (isVercel) {
+        console.warn('⚠️ Variáveis de ambiente da Vercel não encontradas. Verifique as Environment Variables no painel.');
+        console.warn('   - VITE_SUPABASE_URL: ' + (supabaseUrl ? '✅' : '❌'));
+        console.warn('   - VITE_SUPABASE_ANON_KEY: ' + (supabaseKey ? '✅' : '❌'));
+        // Na Vercel, não falha o build, apenas avisa
       } else {
         console.error('❌ Variáveis de ambiente necessárias não encontradas:');
         console.error('   - VITE_SUPABASE_URL: ' + (supabaseUrl ? '✅' : '❌'));

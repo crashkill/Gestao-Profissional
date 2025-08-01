@@ -4,6 +4,7 @@ import { ArrowLeft, Plus, X, Check } from 'lucide-react';
 import { Professional, AREAS, MAIN_SKILLS, OTHER_SKILLS, SKILL_COLUMN_MAP } from '../types/Professional';
 import { Command, CommandInput, CommandList, CommandItem, CommandEmpty } from './ui/command';
 import { Button } from './ui/button';
+import { PageHeader, SuccessScreen, useFeedback, FeedbackSystem } from './ui';
 import { supabase } from '../lib/supabaseClient';
 
 interface ManualFormProps {
@@ -32,6 +33,7 @@ const ManualForm: React.FC<ManualFormProps> = ({ onSubmit, onBack }) => {
   const [newSkillName, setNewSkillName] = useState('');
   const [newSkillType, setNewSkillType] = useState('cargo');
   const skillTypes = ['cargo', 'linguagem', 'framework', 'cloud', 'banco', 'bi', 'devops', 'ciberseguranca', 'ia', 'blockchain'];
+  const { feedback, showFeedback, hideFeedback } = useFeedback();
 
   useEffect(() => {
     supabase.from('skills').select('*').then(({ data }) => {
@@ -99,99 +101,110 @@ const ManualForm: React.FC<ManualFormProps> = ({ onSubmit, onBack }) => {
 
   if (showSuccess) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="fixed inset-0 flex items-center justify-center z-50"
-      >
-        <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border border-white/20 text-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <Check className="h-8 w-8 text-white" />
-          </motion.div>
-          <h3 className="text-2xl font-bold text-white mb-2">Profissional Cadastrado!</h3>
-          <p className="text-slate-300">Redirecionando para o dashboard...</p>
-        </div>
-      </motion.div>
+      <SuccessScreen
+        title="Profissional Cadastrado!"
+        message="O profissional foi adicionado com sucesso ao sistema."
+        buttonText="Voltar ao Dashboard"
+        onButtonClick={onBack}
+        autoRedirect={true}
+        redirectDelay={2000}
+        stats={[
+          { label: "Nome", value: formData.name },
+          { label: "Email", value: formData.email },
+          { label: "Área", value: formData.area || "Não informado" }
+        ]}
+      />
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="max-w-2xl mx-auto"
-    >
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-        <div className="flex items-center mb-8">
-          <button
-            onClick={onBack}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors mr-4"
-          >
-            <ArrowLeft className="h-6 w-6 text-white" />
-          </button>
-          <h2 className="text-3xl font-bold text-white">Cadastro Manual</h2>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      <PageHeader
+        title="Cadastro Manual"
+        description="Adicione um novo profissional ao sistema"
+        onBack={onBack}
+        showBackButton={true}
+      />
 
+      <main className="max-w-4xl mx-auto px-6 pb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 shadow-2xl"
+        >
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Nome */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
               Nome Completo *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
               placeholder="Digite o nome completo"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
               E-mail *
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
               placeholder="exemplo@email.com"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Compartilhamento */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.5 }}
+            className="space-y-4"
+          >
+            <div className="flex items-center space-x-3 p-4 bg-slate-700/30 rounded-xl border border-slate-600/30">
               <input
                 type="checkbox"
                 id="disponivel_compartilhamento"
                 checked={formData.disponivel_compartilhamento}
                 onChange={(e) => setFormData({ ...formData, disponivel_compartilhamento: e.target.checked })}
-                className="w-4 h-4 rounded border-white/20 bg-white/5 text-blue-500 focus:ring-blue-500 focus:ring-offset-0"
+                className="w-5 h-5 rounded border-slate-500 bg-slate-700/50 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 transition-all duration-300"
               />
-              <label htmlFor="disponivel_compartilhamento" className="text-sm font-medium text-slate-300">
+              <label htmlFor="disponivel_compartilhamento" className="text-sm font-semibold text-slate-200">
                 Disponível para Compartilhamento
               </label>
             </div>
 
             {formData.disponivel_compartilhamento && (
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.3 }}
+              >
+                <label className="block text-sm font-semibold text-slate-200 mb-3">
                   Percentual de Compartilhamento
                 </label>
                 <select
                   value={formData.percentual_compartilhamento || ''}
                   onChange={(e) => setFormData({ ...formData, percentual_compartilhamento: e.target.value as '100' | '75' | '50' | '25' })}
-                  className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
                   required={formData.disponivel_compartilhamento}
                 >
                   <option value="" className="bg-slate-800">Selecione o percentual</option>
@@ -200,154 +213,239 @@ const ManualForm: React.FC<ManualFormProps> = ({ onSubmit, onBack }) => {
                   <option value="50" className="bg-slate-800">50%</option>
                   <option value="25" className="bg-slate-800">25%</option>
                 </select>
-              </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
 
           {/* Área */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
               Área de Atuação
             </label>
             <select
               value={formData.area}
               onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
             >
               <option value="" className="bg-slate-800">Selecione uma área</option>
               {AREAS.map(a => <option key={a} value={a} className="bg-slate-800">{a}</option>)}
             </select>
-          </div>
+          </motion.div>
 
           {/* Gestor da Área */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.3, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
               Gestor da Área *
             </label>
             <input
               type="text"
               value={formData.gestor_area}
               onChange={(e) => setFormData({ ...formData, gestor_area: e.target.value })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
+              placeholder="Nome do gestor da área"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Gestor Direto */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
               Gestor Direto *
             </label>
             <input
               type="text"
               value={formData.gestor_direto}
               onChange={(e) => setFormData({ ...formData, gestor_direto: e.target.value })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
+              placeholder="Nome do gestor direto"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Skill Principal */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Linguagem Principal *
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.5, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
+              Linguagem/Tecnologia Principal *
             </label>
-            <select
+            <input
+              type="text"
               value={formData.mainSkill}
               onChange={(e) => setFormData({ ...formData, mainSkill: e.target.value })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
+              placeholder="Ex: JavaScript, Python, Java..."
               required
-            >
-              <option value="" className="bg-slate-800">Selecione a linguagem principal</option>
-              {MAIN_SKILLS.map(s => <option key={s} value={s} className="bg-slate-800">{s}</option>)}
-            </select>
-          </div>
+            />
+          </motion.div>
 
           {/* Nível de Experiência */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Nível de Experiência
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
+              Nível de Experiência *
             </label>
             <select
               value={formData.level}
               onChange={(e) => setFormData({ ...formData, level: e.target.value as 'Júnior' | 'Pleno' | 'Sênior' })}
-              className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-slate-700/70"
+              required
             >
+              <option value="" className="bg-slate-800">Selecione o nível</option>
               <option value="Júnior" className="bg-slate-800">Júnior</option>
               <option value="Pleno" className="bg-slate-800">Pleno</option>
               <option value="Sênior" className="bg-slate-800">Sênior</option>
+              <option value="Especialista" className="bg-slate-800">Especialista</option>
             </select>
-          </div>
+          </motion.div>
 
           {/* Skills/Cargos (Multi-seleção) */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.7, duration: 0.5 }}
+          >
+            <label className="block text-sm font-semibold text-slate-200 mb-3">
               Skills/Cargos
             </label>
-            <Command>
-              <CommandInput
-                placeholder="Buscar skill/cargo..."
-                value={skillSearch}
-                onValueChange={setSkillSearch}
-              />
-              <CommandList>
-                {skills.filter(skill => skill.nome.toLowerCase().includes(skillSearch.toLowerCase())).map(skill => (
-                  <CommandItem
-                    key={skill.id}
-                    onSelect={() => handleSkillSelect(skill)}
-                    className={selectedSkills.find(s => s.id === skill.id) ? 'bg-blue-100' : ''}
-                  >
-                    {skill.nome} <span className="ml-2 text-xs text-slate-400">({skill.tipo})</span>
-                  </CommandItem>
-                ))}
-                <CommandEmpty>
-                  Nenhum skill/cargo encontrado.<br />
-                  <Button type="button" size="sm" onClick={() => setShowAddSkill(true)} className="mt-2">Adicionar novo</Button>
-                </CommandEmpty>
-              </CommandList>
-            </Command>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {selectedSkills.map(skill => (
-                <span key={skill.id} className="bg-blue-600 text-white px-2 py-1 rounded flex items-center">
-                  {skill.nome} <span className="ml-1 text-xs">({skill.tipo})</span>
-                  <button type="button" className="ml-1" onClick={() => handleSkillRemove(skill.id)}><X size={14} /></button>
-                </span>
-              ))}
+            <div className="relative">
+              <Command className="bg-slate-700/50 border border-slate-600/50 rounded-xl">
+                <CommandInput
+                  placeholder="Buscar skill/cargo..."
+                  value={skillSearch}
+                  onValueChange={setSkillSearch}
+                  className="bg-transparent text-white placeholder-slate-400 p-4"
+                />
+                <CommandList className="max-h-40 overflow-y-auto">
+                  <CommandEmpty className="text-slate-400 p-4">
+                    Nenhum skill/cargo encontrado.<br />
+                    <Button type="button" size="sm" onClick={() => setShowAddSkill(true)} className="mt-2">Adicionar novo</Button>
+                  </CommandEmpty>
+                  {skills.filter(skill => skill.nome.toLowerCase().includes(skillSearch.toLowerCase())).map(skill => (
+                    <CommandItem
+                      key={skill.id}
+                      onSelect={() => handleSkillSelect(skill)}
+                      className={`text-white hover:bg-slate-600/50 cursor-pointer p-3 transition-colors duration-200 ${selectedSkills.find(s => s.id === skill.id) ? 'bg-purple-600/30' : ''}`}
+                    >
+                      {skill.nome} <span className="ml-2 text-xs text-slate-400">({skill.tipo})</span>
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </Command>
             </div>
+
+            {/* Skills Selecionadas */}
+            {selectedSkills.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mt-4"
+              >
+                <p className="text-sm font-medium text-slate-200 mb-3">Skills selecionadas:</p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedSkills.map(skill => (
+                    <motion.span
+                      key={skill.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-sm font-medium shadow-lg"
+                    >
+                      {skill.nome} <span className="ml-1 text-xs">({skill.tipo})</span>
+                      <button
+                        type="button"
+                        onClick={() => handleSkillRemove(skill.id)}
+                        className="hover:bg-white/20 rounded-full p-1 transition-colors duration-200"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </motion.span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Adicionar Nova Skill */}
             {showAddSkill && (
-              <div className="mt-2 bg-white/10 p-4 rounded-lg">
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.3 }}
+                className="mt-4 bg-slate-700/30 p-4 rounded-xl border border-slate-600/30"
+              >
                 <input
                   type="text"
                   placeholder="Nome do skill/cargo"
                   value={newSkillName}
                   onChange={e => setNewSkillName(e.target.value)}
-                  className="w-full p-2 rounded mb-2"
+                  className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 mb-3"
                 />
                 <select
                   value={newSkillType}
                   onChange={e => setNewSkillType(e.target.value)}
-                  className="w-full p-2 rounded mb-2"
+                  className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 mb-3"
                 >
-                  {skillTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                  {skillTypes.map(type => <option key={type} value={type} className="bg-slate-800">{type}</option>)}
                 </select>
-                <Button type="button" onClick={handleAddSkill}>Adicionar</Button>
-                <Button type="button" variant="ghost" onClick={() => setShowAddSkill(false)} className="ml-2">Cancelar</Button>
-              </div>
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    onClick={handleAddSkill}
+                    className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl transition-all duration-300 shadow-lg"
+                  >
+                    Adicionar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setShowAddSkill(false)}
+                    className="px-4 py-2 bg-slate-600/50 hover:bg-slate-600/70 text-white rounded-xl transition-all duration-300"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
 
           {/* Submit Button */}
-          <motion.button
-            type="submit"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.8, duration: 0.5 }}
+            className="pt-8"
           >
-            Cadastrar Profissional
-          </motion.button>
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              Cadastrar Profissional
+            </motion.button>
+          </motion.div>
         </form>
-      </div>
-    </motion.div>
+      </motion.div>
+    </main>
+    <FeedbackSystem feedback={feedback} onClose={hideFeedback} />
+  </div>
   );
 };
 
